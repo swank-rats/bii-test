@@ -8,24 +8,26 @@
 #include <iostream>
 #include <unistd.h>
 
-int main () {
-    int i=0;
-    zmq::context_t context (1);
-    zmq::socket_t subscriber (context, ZMQ_PULL);
+int main() {
+    const char *bind_to = "tcp://127.0.0.1:5555";
+
+    int rc;
+
+    void *ctx = zmq_init(1);
+
+    void *s_in = zmq_socket(ctx, ZMQ_PULL);
 
     int conflate = 1;
-    zmq_setsockopt (subscriber, ZMQ_CONFLATE, &conflate, sizeof(conflate));
+    rc = zmq_setsockopt(s_in, ZMQ_CONFLATE, &conflate, sizeof(conflate));
 
-    subscriber.connect("tcp://localhost:5556");
-    subscriber.setsockopt(ZMQ_SUBSCRIBE, "", 0);
+    rc = zmq_bind(s_in, bind_to);
 
-    for (int update_nbr = 0; update_nbr < 100; update_nbr++)
-    {
-        zmq::message_t update;
-        subscriber.recv(&update);
-        i++;
-        std::cout<<"receiving  :"<<i<<std::endl;
+    while (1) {
+        int payload_recved = 0;
+        rc = zmq_recv(s_in, (void *) &payload_recved, sizeof(int), 0);
 
-        usleep(10000000);
+        std::cout << "received: " << payload_recved << std::endl;
+
+        zmq_sleep(5);
     }
 }
