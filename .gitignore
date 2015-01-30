@@ -1,3 +1,14 @@
+# biicode
+bin/
+build/
+cmake/
+deps/
+
+# idea
+.idea
+*.iml
+~*
+
 # Compiled Object files
 *.slo
 *.lo
