@@ -3,6 +3,7 @@ bin/
 build/
 cmake/
 deps/
+bii/*
 
 # idea
 .idea
